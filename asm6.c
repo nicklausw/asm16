@@ -141,63 +141,50 @@ char ophead[]={0,'#','(','(','(',0,0,0,0,0,0,0,0,
 char *optail[]={"A","",")",",X)","),Y",",X",",Y",",X",",Y","","","","",
 				/*65816 additions*/"",",S",",S),Y","","",",X","]","]","]"};
 
+//the classic never-before-changed 6502 opcodes
 byte brk[]={0x00,IMM,0x00,ZP,0x00,IMP,-1};
-byte ora[]={0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x19,ABSY,0x05,ZP,0x0d,ABS,-1};
 byte asl[]={0x0a,ACC,0x16,ZPX,0x1e,ABSX,0x06,ZP,0x0e,ABS,0x0a,IMP,-1};
 byte php[]={0x08,IMP,-1};
 byte bpl[]={0x10,REL,-1};
 byte clc[]={0x18,IMP,-1};
-byte jsr[]={0x20,ABS,-1};
-byte and[]={0x29,IMM,0x21,INDX,0x31,INDY,0x35,ZPX,0x3d,ABSX,0x39,ABSY,0x25,ZP,0x2d,ABS,-1};
-byte bit[]={0x24,ZP,0x2c,ABS,-1};
 byte rol[]={0x2a,ACC,0x36,ZPX,0x3e,ABSX,0x26,ZP,0x2e,ABS,0x2a,IMP,-1};
 byte plp[]={0x28,IMP,-1};
 byte bmi[]={0x30,REL,-1};
 byte sec[]={0x38,IMP,-1};
 byte rti[]={0x40,IMP,-1};
-byte eor[]={0x49,IMM,0x41,INDX,0x51,INDY,0x55,ZPX,0x5d,ABSX,0x59,ABSY,0x45,ZP,0x4d,ABS,-1};
 byte lsr[]={0x4a,ACC,0x56,ZPX,0x5e,ABSX,0x46,ZP,0x4e,ABS,0x4a,IMP,-1};
 byte pha[]={0x48,IMP,-1};
-byte jmp[]={0x6c,IND,0x4c,ABS,-1};
 byte bvc[]={0x50,REL,-1};
 byte cli[]={0x58,IMP,-1};
 byte rts[]={0x60,IMP,-1};
-byte adc[]={0x69,IMM,0x61,INDX,0x71,INDY,0x75,ZPX,0x7d,ABSX,0x79,ABSY,0x65,ZP,0x6d,ABS,-1};
 byte ror[]={0x6a,ACC,0x76,ZPX,0x7e,ABSX,0x66,ZP,0x6e,ABS,0x6a,IMP,-1};
 byte pla[]={0x68,IMP,-1};
 byte bvs[]={0x70,REL,-1};
 byte sei[]={0x78,IMP,-1};
-byte sta[]={0x81,INDX,0x91,INDY,0x95,ZPX,0x9d,ABSX,0x99,ABSY,0x85,ZP,0x8d,ABS,-1};
-byte sty[]={0x94,ZPX,0x84,ZP,0x8c,ABS,-1};
-byte stx[]={0x96,ZPY,0x86,ZP,0x8e,ABS,-1};
 byte dey[]={0x88,IMP,-1};
 byte txa[]={0x8a,IMP,-1};
 byte bcc[]={0x90,REL,-1};
 byte tya[]={0x98,IMP,-1};
 byte txs[]={0x9a,IMP,-1};
-byte ldy[]={0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,-1};
-byte lda[]={0xa9,IMM,0xa1,INDX,0xb1,INDY,0xb5,ZPX,0xbd,ABSX,0xb9,ABSY,0xa5,ZP,0xad,ABS,-1};
-byte ldx[]={0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,-1};
 byte tay[]={0xa8,IMP,-1};
 byte tax[]={0xaa,IMP,-1};
 byte bcs[]={0xb0,REL,-1};
 byte clv[]={0xb8,IMP,-1};
 byte tsx[]={0xba,IMP,-1};
 byte cpy[]={0xc0,IMM,0xc4,ZP,0xcc,ABS,-1};
-byte cmp[]={0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSX,0xd9,ABSY,0xc5,ZP,0xcd,ABS,-1};
 byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,-1};
 byte iny[]={0xc8,IMP,-1};
 byte dex[]={0xca,IMP,-1};
 byte bne[]={0xd0,REL,-1};
 byte cld[]={0xd8,IMP,-1};
 byte cpx[]={0xe0,IMM,0xe4,ZP,0xec,ABS,-1};
-byte sbc[]={0xe9,IMM,0xe1,INDX,0xf1,INDY,0xf5,ZPX,0xfd,ABSX,0xf9,ABSY,0xe5,ZP,0xed,ABS,-1};
 byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,-1};
 byte inx[]={0xe8,IMP,-1};
 byte nop[]={0xea,IMP,-1};
 byte beq[]={0xf0,REL,-1};
 byte sed[]={0xf8,IMP,-1};
 
+//the no-arg 65816 additions
 byte xce[]={0xFB,IMP,-1};
 byte phb[]={0x8B,IMP,-1};
 byte phd[]={0x0B,IMP,-1};
@@ -218,6 +205,54 @@ byte rtl[]={0x6B,IMP,-1};
 byte stp[]={0xDB,IMP,-1};
 byte wai[]={0xCB,IMP,-1};
 byte xba[]={0xEB,IMP,-1};
+
+//the some-arg 65816 additions
+byte stz[]={0x74,ZPX,0x64,ZP,0x9E,ABSX,0x9C,ABS,-1};
+byte brl[]={0x82,RELL,-1};
+byte bra[]={0x80,REL,-1};
+byte sep[]={0xE2,IMM,-1};
+byte rep[]={0xC2,IMM,-1};
+byte pea[]={0xF4,ABS,-1};
+//byte pei[]={0xD4,INDD,-1};
+byte per[]={0x62,RELL,-1};
+byte trb[]={0x14,ZP,0x1C,ABS,-1};
+byte tsb[]={0x04,ZP,0x0C,ABS,-1};
+//byte mvn[]={1,-1};
+//byte mvp[]={1,-1};
+byte jml[]={0x5C,ABSL,-1};
+byte jsl[]={0x22,ABSL,-1};
+byte cop[]={0x02,IMM,-1};
+
+//the modified 6502 originals (first line new, 2nd line old, some exceptions)
+byte ora[]={
+	0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x19,ABSY,0x05,ZP,0x0d,ABS,-1};
+byte jsr[]={0x22,ABSL,//alias jsl
+	0x20,ABS,-1};
+byte and[]={
+	0x29,IMM,0x21,INDX,0x31,INDY,0x35,ZPX,0x3d,ABSX,0x39,ABSY,0x25,ZP,0x2d,ABS,-1};
+byte bit[]={0x34,ZPX,0x24,ZP,0x3C,ABSX,0x2c,ABS,0x89,IMM,-1};
+byte eor[]={
+	0x49,IMM,0x41,INDX,0x51,INDY,0x55,ZPX,0x5d,ABSX,0x59,ABSY,0x45,ZP,0x4d,ABS,-1};
+byte jmp[]={0x5c,ABSL,//alias jml
+	0x6c,IND,0x4c,ABS,-1};
+byte adc[]={
+	0x69,IMM,0x61,INDX,0x71,INDY,0x75,ZPX,0x7d,ABSX,0x79,ABSY,0x65,ZP,0x6d,ABS,-1};
+byte sta[]={
+	0x81,INDX,0x91,INDY,0x95,ZPX,0x9d,ABSX,0x99,ABSY,0x85,ZP,0x8d,ABS,-1};
+byte sty[]={
+	0x94,ZPX,0x84,ZP,0x8c,ABS,-1};
+byte stx[]={
+	0x96,ZPY,0x86,ZP,0x8e,ABS,-1};
+byte ldy[]={
+	0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,-1};
+byte lda[]={
+	0xa9,IMM,0xa1,INDX,0xb1,INDY,0xb5,ZPX,0xbd,ABSX,0xb9,ABSY,0xa5,ZP,0xad,ABS,-1};
+byte ldx[]={
+	0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,-1};
+byte cmp[]={0xD3,RELSY,0xD7,ZPILY,
+	0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSX,0xd9,ABSY,0xc5,ZP,0xcd,ABS,-1};
+byte sbc[]={
+	0xe9,IMM,0xe1,INDX,0xf1,INDY,0xf5,ZPX,0xfd,ABSX,0xf9,ABSY,0xe5,ZP,0xed,ABS,-1};
 
 void *rsvdlist[]={       //all reserved words
         "BRK",brk,
@@ -298,6 +333,24 @@ void *rsvdlist[]={       //all reserved words
 		"STP",stp,
 		"WAI",wai,
 		"XBA",xba,
+
+		//some-args 65816
+		"STZ",stz,
+		"BRL",brl,
+		"BRA",bra,
+		"SEP",sep,
+		"REP",rep,
+		"PEA",pea,
+		//"PEI",pei,
+		"PER",per,
+		"TRB",trb,
+		"TSB",tsb,
+		//"MVN",mvn,
+		//"MVP",mvp,
+		"JML",jml,
+		"JSL",jsl,
+		"COP",cop,
+
         0, 0
 };
 
@@ -691,6 +744,15 @@ int eval(char **str,int precedence) {
             ret=eval(&s,WHOLEEXP);
             s+=strspn(s,whitesp);       //eatwhitespace
             if(*s==')')
+                s++;
+            else
+                errmsg=IncompleteExp;
+            break;
+		case '[':
+            s++;
+            ret=eval(&s,WHOLEEXP);
+            s+=strspn(s,whitesp);       //eatwhitespace
+            if(*s==']')
                 s++;
             else
                 errmsg=IncompleteExp;
