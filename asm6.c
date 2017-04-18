@@ -129,10 +129,18 @@ void expandmacro(label*,char**,int,char*);
 void expandrept(int,char*);
 void make_error(label*,char**);
 
-enum optypes {ACC,IMM,IND,INDX,INDY,ZPX,ZPY,ABSX,ABSY,ZP,ABS,REL,IMP};
-int opsize[]={0,1,2,1,1,1,1,2,2,1,2,1,0};
-char ophead[]={0,'#','(','(','(',0,0,0,0,0,0,0,0};
-char *optail[]={"A","",")",",X)","),Y",",X",",Y",",X",",Y","","","",""};
+enum optypes {ACC,IMM,IND,INDX,INDY,ZPX,ZPY,ABSX,ABSY,ZP,ABS,REL,IMP,
+				/*65816 additions*/RELL, RELS, RELSY, BMV, ABSL, ABSLX, ABSIL, ZPIL, ZPILY};
+
+int opsize[]={0,1,2,1,1,1,1,2,2,1,2,1,0,
+				/*65816 additions*/2,1,1,2,3,3,3,3,3};
+
+char ophead[]={0,'#','(','(','(',0,0,0,0,0,0,0,0,
+				/*65816 additions*/0,0,'(',0,0,0,'[','[','['};
+
+char *optail[]={"A","",")",",X)","),Y",",X",",Y",",X",",Y","","","","",
+				/*65816 additions*/"",",S",",S),Y","","",",X","]","]","]"};
+
 byte brk[]={0x00,IMM,0x00,ZP,0x00,IMP,-1};
 byte ora[]={0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x19,ABSY,0x05,ZP,0x0d,ABS,-1};
 byte asl[]={0x0a,ACC,0x16,ZPX,0x1e,ABSX,0x06,ZP,0x0e,ABS,0x0a,IMP,-1};
@@ -189,7 +197,28 @@ byte inx[]={0xe8,IMP,-1};
 byte nop[]={0xea,IMP,-1};
 byte beq[]={0xf0,REL,-1};
 byte sed[]={0xf8,IMP,-1};
- 
+
+byte xce[]={0xFB,IMP,-1};
+byte phb[]={0x8B,IMP,-1};
+byte phd[]={0x0B,IMP,-1};
+byte phk[]={0x4B,IMP,-1};
+byte phx[]={0xDA,IMP,-1};
+byte phy[]={0x5A,IMP,-1};
+byte plb[]={0xAB,IMP,-1};
+byte pld[]={0x2B,IMP,-1};
+byte plx[]={0xFA,IMP,-1};
+byte ply[]={0x7A,IMP,-1};
+byte tcd[]={0x5B,IMP,-1};
+byte tcs[]={0x1B,IMP,-1};
+byte tdc[]={0x7B,IMP,-1};
+byte tsc[]={0x3B,IMP,-1};
+byte txy[]={0x9B,IMP,-1};
+byte tyx[]={0xBB,IMP,-1};
+byte rtl[]={0x6B,IMP,-1};
+byte stp[]={0xDB,IMP,-1};
+byte wai[]={0xCB,IMP,-1};
+byte xba[]={0xEB,IMP,-1};
+
 void *rsvdlist[]={       //all reserved words
         "BRK",brk,
         "PHP",php,
@@ -247,6 +276,28 @@ void *rsvdlist[]={       //all reserved words
         "STX",stx,
         "DEC",dec,
         "INC",inc,
+
+        // no-args 65816
+		"XCE",xce,
+		"PHB",phb,
+		"PHD",phd,
+		"PHK",phk,
+		"PHX",phx,
+		"PHY",phy,
+		"PLB",plb,
+		"PLD",pld,
+		"PLX",plx,
+		"PLY",ply,
+		"TCD",tcd,
+		"TCS",tcs,
+		"TDC",tdc,
+		"TSC",tsc,
+		"TXY",txy,
+		"TYX",tyx,
+		"RTL",rtl,
+		"STP",stp,
+		"WAI",wai,
+		"XBA",xba,
         0, 0
 };
 

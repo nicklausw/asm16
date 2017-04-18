@@ -1,0 +1,116 @@
+This is my little child from out of the public domain.
+
+I'm gonna turn asm6 into a 65816 assembler.
+
+So first, let's collect the new opcodes.
+
+stz
+brl
+bra
+sep
+rep
+xce
+pea
+pei
+per
+phb
+phd
+phk
+phx
+phy
+plb
+pld
+plp
+plx
+ply
+trb
+tsb
+tcd
+tcs
+tdc
+tsc
+txy
+tyx
+mvn
+mvp
+jml
+jsl
+rtl
+cop
+stp
+wai
+xba
+
+That was a stupid long list, so let's divide things up.
+
+These opcodes have no arguments (easiest to implement).
+
+xce
+phb
+phd
+phk
+phx
+phy
+plb
+pld
+plx
+ply
+tcd
+tcs
+tdc
+tsc
+txy
+tyx
+rtl
+stp
+wai
+xba
+
+Let's go ahead and add those to the program...
+
+Easy enough, very tedious implementations.
+
+Now let's see what's left.
+
+stz
+brl
+bra
+sep
+rep
+pea
+pei
+per
+trb
+tsb
+tcd
+tcs
+mvn
+mvp
+jml
+jsl
+cop
+
+Nothing too bad, but new addressing modes
+are present now. asm16 needs to know about
+them! So let's list them out.
+
+Stolen from https://wiki.nesdev.com/w/images/7/76/Programmanual.pdf
+
+Program Counter Relative Long; BRL; JMPLABEL
+Stack Relative; LDA; 3, S
+Stack Relative Indirect Indexed with Y; LDA; (5,S), Y
+Block Move; MVP; 0,0
+Absolute Long; LDA; $02F000
+Absolute Long Indexed with X; LDA; $12D080, X
+Absolute Indirect Long; JMP; [$2000]
+Direct Page Indirect Long; LDA; [$55]
+Direct Page Indirect Long Indexed with Y; LDA; [$55], Y
+
+Currently we're just concerned with adding new stuff to enums.
+
+Those are all in with respective names:
+RELL, RELS, RELSY, BMV, ABSL, ABSLX, ABSIL, ZPIL, ZPILY.
+I'm just referring to direct page as ZP for now. Not sure
+if custom DP control is a planned feature.
+
+So let's try adding some of those opcodes in...it takes a while.
