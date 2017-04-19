@@ -1,5 +1,6 @@
 ; stolen from bass
 
+.org $0000
 asl
 clc
 cld
@@ -35,12 +36,8 @@ sec
 sed
 sei
 stp
-tad
-tas
 tax
 tay
-tda
-tsa
 tsx
 txa
 txs
@@ -212,16 +209,6 @@ ror $FE,x
 ror $FEDC
 ror $FE
 
-inc $FEDC,x
-inc $FE,x
-inc $FEDC
-inc $FE
-
-dec $FEDC,x
-dec $FE,x
-dec $FEDC
-dec $FE
-
 bit #$FEDC
 bit #$FE
 bit $FEDC,x
@@ -272,7 +259,7 @@ trb $FE
 tsb $FEDC
 tsb $FE
 
-jmp (JMPINDIND,x)
+;jmp (JMPINDIND,x)
 jmp (JMPIND)
 JMPINDIND:
 jmp [JMPABSIND]
@@ -282,7 +269,7 @@ JMPABSIND:
 jml JMLLONG
 JMPABS:
 
-jsr (JSRINDIND,x)
+;jsr (JSRINDIND,x)
 JMLLONG:
 jsr JSRABS
 JSRINDIND:
@@ -315,12 +302,12 @@ BEQREL:
 ;mvn $FE=$DC
 
 pea $FEDC
-pei ($FE)
-per $FEDC
+;pei ($FE)
+;per $FEDC
 
 rep #$FE
 sep #$FE
 
 brk #$FE
 cop #$FE
-wdm #$FE
+;wdm #$FE
