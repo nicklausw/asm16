@@ -2,6 +2,9 @@ This is my little child from out of the public domain.
 
 I'm gonna turn asm6 into a 65816 assembler.
 
+(I gave up on documenting stuff after like a few hours, so there's a few errors
+below).
+
 So first, let's collect the new opcodes.
 
 stz

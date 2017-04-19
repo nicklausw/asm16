@@ -1460,14 +1460,14 @@ badlabel:
 
 void showhelp(void) {
     puts("");
-    puts("asm6 " VERSION "\n");
+    puts("asm16 " VERSION "\n");
     puts("Usage:  asm6 [-options] sourcefile [outputfile] [listfile]\n");
     puts("    -?          show this help");
     puts("    -l          create listing");
     puts("    -L          create verbose listing (expand REPT, MACRO)");
     puts("    -d<name>    define symbol");
     puts("    -q          quiet mode (no output unless error)\n");
-    puts("See README.TXT for more info.\n");
+    puts("See README for more info.\n");
 }
 
 //--------------------------------------------------------------------------------------------
