@@ -130,16 +130,16 @@ void expandrept(int,char*);
 void make_error(label*,char**);
 
 enum optypes {ACC,IMM,IND,INDX,INDY,ZPX,ZPY,ABSX,ABSY,ZP,ABS,REL,IMP,
-				/*65816 additions*/RELL, RELS, RELSY, BMV, ABSL, ABSLX, ABSIL, ZPIL, ZPILY};
+				/*65816 additions*/RELL, RELS, RELSY, BMV, ABSL, ABSLX, ABSIL, ZPIL, ZPILY, IMML};
 
 int opsize[]={0,1,2,1,1,1,1,2,2,1,2,1,0,
-				/*65816 additions*/2,1,1,2,3,3,3,3,3};
+				/*65816 additions*/2,1,1,2,3,3,3,3,3,2};
 
 char ophead[]={0,'#','(','(','(',0,0,0,0,0,0,0,0,
-				/*65816 additions*/0,0,'(',0,0,0,'[','[','['};
+				/*65816 additions*/0,0,'(',0,0,0,'[','[','[','#'};
 
 char *optail[]={"A","",")",",X)","),Y",",X",",Y",",X",",Y","","","","",
-				/*65816 additions*/"",",S",",S),Y","","",",X","]","]","]"};
+				/*65816 additions*/"",",S",",S),Y","","",",X","]","]","],Y",""};
 
 //the classic never-before-changed 6502 opcodes
 byte brk[]={0x00,IMM,0x00,ZP,0x00,IMP,-1};
@@ -172,13 +172,11 @@ byte bcs[]={0xb0,REL,-1};
 byte clv[]={0xb8,IMP,-1};
 byte tsx[]={0xba,IMP,-1};
 byte cpy[]={0xc0,IMM,0xc4,ZP,0xcc,ABS,-1};
-byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,-1};
 byte iny[]={0xc8,IMP,-1};
 byte dex[]={0xca,IMP,-1};
 byte bne[]={0xd0,REL,-1};
 byte cld[]={0xd8,IMP,-1};
 byte cpx[]={0xe0,IMM,0xe4,ZP,0xec,ABS,-1};
-byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,-1};
 byte inx[]={0xe8,IMP,-1};
 byte nop[]={0xea,IMP,-1};
 byte beq[]={0xf0,REL,-1};
@@ -224,8 +222,8 @@ byte jsl[]={0x22,ABSL,-1};
 byte cop[]={0x02,IMM,-1};
 
 //the modified 6502 originals (first line new, 2nd line old, some exceptions)
-byte ora[]={
-	0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x19,ABSY,0x05,ZP,0x0d,ABS,-1};
+byte ora[]={0x13,RELSY,0x03,RELS,0x17,ZPILY,0x12,IND,
+	0x09,IMM,0x09,IMML,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x1F,ABSLX,0x19,ABSY,0x05,ZP,0x0d,ABS,0x0F,ABSL,-1};
 byte jsr[]={0x22,ABSL,//alias jsl
 	0x20,ABS,-1};
 byte and[]={
@@ -253,6 +251,8 @@ byte cmp[]={0xD3,RELSY,0xD7,ZPILY,
 	0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSX,0xd9,ABSY,0xc5,ZP,0xcd,ABS,-1};
 byte sbc[]={
 	0xe9,IMM,0xe1,INDX,0xf1,INDY,0xf5,ZPX,0xfd,ABSX,0xf9,ABSY,0xe5,ZP,0xed,ABS,-1};
+byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,0x3A,IMP,-1};
+byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,0x1A,IMP,-1};
 
 void *rsvdlist[]={       //all reserved words
         "BRK",brk,
@@ -659,7 +659,7 @@ bin:        j=*s;
     return ret;
 }
 
-char mathy[]="!^&|+-*/%()<>=,";
+char mathy[]="!^&|+-*/%()<>=,[]";
 enum prectypes {WHOLEEXP,ORORP,ANDANDP,ORP,XORP,ANDP,EQCOMPARE,COMPARE,SHIFT,PLUSMINUS,MULDIV,UNARY};//precedence levels
 enum operators {NOOP,EQUAL,NOTEQUAL,GREATER,GREATEREQ,LESS,LESSEQ,PLUS,MINUS,MUL,DIV,MOD,AND,XOR,OR,ANDAND,OROR,LEFTSHIFT,RIGHTSHIFT};//all operators
 char prec[]={WHOLEEXP,EQCOMPARE,EQCOMPARE,COMPARE,COMPARE,COMPARE,COMPARE,PLUSMINUS,PLUSMINUS,MULDIV,MULDIV,MULDIV,ANDP,XORP,ORP,ANDANDP,ORORP,SHIFT,SHIFT};//precedence of each operator
@@ -1994,7 +1994,19 @@ void opcode(label *id, char **next) {
                         }
                     }
                 }
-            } else {
+            } else if(type==RELL) {
+				 if(!dependant) {
+                    val-=addr+2;
+                    if(val>32767 || val<-32768) {
+                        needanotherpass=1;//above comment (i'm a copy-paster, fight me)
+                        if(lastchance)
+                        {
+                            errmsg="Branch out of range.";
+                            forceRel = 1;
+                        }
+                    }
+                }
+			} else {
                 if(opsize[type]==1) {
                     if(!dependant) {
                         if(val>255 || val<-128)
@@ -2003,10 +2015,14 @@ void opcode(label *id, char **next) {
                         if(type!=IMM)
                             continue;//default to non-ZP instruction
                     }
-                } else {//opsize[type]==2
-                    if((val<0 || val>0xffff) && !dependant)
+                } else if (opsize[type]==2) {//opsize[type]==2
+                    if((val<-32768 || val>0xffff) && !dependant)
                         errmsg=OutOfRange;
-                }
+					else {
+						if(type!=IMML&&type!=ABSX&&type!=ABSY)
+							continue;
+					}
+				}
             }
             if(errmsg && !dependant && !forceRel) continue;
         }
