@@ -83,6 +83,10 @@ label firstlabel={          //'$' label
 typedef unsigned char byte;
 typedef void (*icfn)(label*,char**);
 
+enum reg {b8, b16};
+enum reg reg_a = b8;
+enum reg reg_i = b8;
+
 label *findlabel(char*);
 void initlabels();
 label *newlabel();
@@ -242,11 +246,11 @@ byte sty[]={
 byte stx[]={
 	0x96,ZPY,0x86,ZP,0x8e,ABS,-1};
 byte ldy[]={
-	0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,-1};
+	0xa0,IMML,0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,-1};
 byte lda[]={0xA3,RELS,0xB3,RELSY,
 	0xa9,IMML,0xa9,IMM,0xa1,INDX,0xb1,INDY,0xb5,ZPX,0xBF,ABSLX,0xbd,ABSX,0xb9,ABSY,0xa5,ZP,0xad,ABS,0xAF,ABSL,-1};
 byte ldx[]={
-	0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,-1};
+	0xa2,IMML,0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,-1};
 byte cmp[]={0xC3,RELS,0xD3,RELSY,0xD7,ZPILY,
 	0xc9,IMML,0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSLX,0xd9,ABSX,0xDF,ABSY,0xc5,ZP,0xcd,ABS,0xCF,ABSL,-1};
 
@@ -255,6 +259,15 @@ byte sbc[]={0xe3,RELS,0xF3,RELSY,0xF7,ZPILY,0xE7,ZPIL,
 	0xF2,IND,0xe9,IMML,0xe9,IMM,0xe1,INDX,0xf1,INDY,0x00,ABSLX,0xfd,ABSX,0xf5,ZPX,0xf9,ABSY,0xe5,ZP,0xed,ABS,0xEF,ABSL,-1};
 byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,0x3A,IMP,-1};
 byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,0x1A,IMP,-1};
+
+//opcodes that involve a's size
+char *regaopts[]={
+    "LDA", "STA", "\0"
+};
+
+char *regiopts[]={
+    "LDX", "STX", "LDY", "STY", "\0"
+};
 
 void *rsvdlist[]={       //all reserved words
         "BRK",brk,
@@ -1968,6 +1981,22 @@ void org(label *id, char **next) {
     else pad(id,next);
 }
 
+int affects_rega(const char *name) {
+    int c=0;
+    for(;regaopts[c][0]!='\0';c++) {
+        if(!strcmp(name, regaopts[c])) return 1;
+    }
+    return 0;
+}
+
+int affects_regi(const char *name) {
+    int c=0;
+    for(;regiopts[c][0]!='\0';c++) {
+        if(!strcmp(name, regiopts[c])) return 1;
+    }
+    return 0;
+}
+
 void opcode(label *id, char **next) {
     char *s,*s2;
     int type,val = 0;
@@ -2025,8 +2054,10 @@ void opcode(label *id, char **next) {
 						if(type!=IMML&&type!=ABSX&&type!=ABSY&&type!=IND&&type!=ABS)
 							continue;
 						if(type==IMML) {
-							if(((val & 0xFF) == val) && !dependant)
-								continue; // we can use zeropage
+							if(affects_rega((*id).name) && reg_a == b8)
+                                continue;
+                            if(affects_regi((*id).name) && reg_i == b8)
+                                continue;
 						}
 					}
 				} else if (opsize[type]==3) {
@@ -2059,6 +2090,23 @@ void opcode(label *id, char **next) {
             output_le(0xFF,1);
         } else {
             output(op,1);
+        }
+
+        // if it's rep or sep, register sizes will change.
+        if(!strcmp((*id).name, "REP")) {
+            //becomes 16 bit
+            switch(val) {
+                case 0x10: reg_i = b16; break;
+                case 0x20: reg_a = b16; break;
+                case 0x30: reg_a = b16; reg_i = b16; break;
+            }
+        } else if (!strcmp((*id).name, "SEP")) {
+            //becomes 8 bit
+            switch(val) {
+                case 0x10: reg_i = b8; break;
+                case 0x20: reg_a = b8; break;
+                case 0x30: reg_a = b8; reg_i = b8; break;
+            }
         }
 
         output_le(val,opsize[type]);
