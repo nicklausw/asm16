@@ -241,5 +241,15 @@ I figure let's go ahead and teach asm16 how to handle these new opcode options.
 
 First off, no bracket support. Easy fix, just add '[' to a switch case.
 
-Now, the function that decides which opcode to use is very weird, so let's
-see what we can do.
+Now, the function that decides which opcode to use had some simplicities
+going on because the assembler originally lacked concern for 24-bit numbers.
+Mwahaha, say goodbye to simplicity!
+
+The rule for adding new opcode stuff has been found: first the original, then its
+long counterpart. Otherwise the assembler will default to bigger opcode and that sucks.
+Not even mentioning that later on, control of A, X and Y sizes will be added...
+
+Oh hey, fun bug. So opcode arrays are unsigned chars, ended with -1.
+Well, for an unsigned 8-bit variable, -1 is hex FF. so is a 65816 opcode.
+So imagine me sitting there appalled for 3 hours as to why asm6 was suddenly
+being my worst nightmare.
