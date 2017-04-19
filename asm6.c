@@ -262,7 +262,7 @@ byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,0x1A,IMP,-1};
 
 //opcodes that involve a's size
 char *regaopts[]={
-    "LDA", "STA", "\0"
+    "LDA", "STA", "CMP", "\0"
 };
 
 char *regiopts[]={
