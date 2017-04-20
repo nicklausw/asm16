@@ -235,8 +235,7 @@ byte and[]={0x33,RELSY,0x23,RELS,
 byte bit[]={0x34,ZPX,0x24,ZP,0x3C,ABSX,0x2c,ABS,0x89,IMM,0x89,IMML,-1};
 byte eor[]={0x43,RELS,0x53,RELSY,
 	0x49,IMML,0x49,IMM,0x41,INDX,0x51,INDY,0x55,ZPX,0x5F,ABSLX,0x5d,ABSX,0x59,ABSY,0x45,ZP,0x4d,ABS,0x4F,ABSL,-1};
-byte jmp[]={0x5c,ABSL,//alias jml
-	0x6c,IND,0x4c,ABS,-1};
+byte jmp[]={0x6c,IND,0x4c,ABS,-1};
 byte adc[]={0x63,RELS,0x73,RELSY,
 	0x69,IMML,0x69,IMM,0x61,INDX,0x71,INDY,0x75,ZPX,0x7F,ABSLX,0x7d,ABSX,0x79,ABSY,0x65,ZP,0x6d,ABS,0x6F,ABSL,-1};
 byte sta[]={0x83,RELS,0x93,RELSY,
@@ -366,6 +365,14 @@ void *rsvdlist[]={       //all reserved words
 		"JSL",jsl,
 		"COP",cop,
 
+        //65816 aliases
+        //taken from ca65
+        "CPA",cmp,
+        "SWA",xba,
+        "TAD",tcd,
+        "TAS",tcs,
+        "TDA",tdc,
+        "TSA",tsc,
         0, 0
 };
 

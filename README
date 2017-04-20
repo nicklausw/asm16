@@ -1,258 +1,28 @@
-This is my little child from out of the public domain.
+Welcome to asm16, my child from the public domain.
 
-I'm gonna turn asm6 into a 65816 assembler.
+Original asm6 readme in README-OLD.
 
-(I gave up on documenting stuff after like a few hours, so there's a few errors
-below).
+It's basically asm6 for the snes, or any other machine
+you find that uses a WDC 65816 processor.
 
-So first, let's collect the new opcodes.
+You should be able to write a program for asm16 just like
+you would for asm6, but with the extra opcodes and 24-bit
+addressing and such. If not, bug reports are welcome.
 
-stz
-brl
-bra
-sep
-rep
-xce
-pea
-pei
-per
-phb
-phd
-phk
-phx
-phy
-plb
-pld
-plp
-plx
-ply
-trb
-tsb
-tdc
-tsc
-txy
-tyx
-mvn
-mvp
-jml
-jsl
-rtl
-cop
-stp
-wai
-xba
+Test ROM is in the test folder (warning sloppy source), build with:
+asm16 test/main.s test/test.sfc
 
-That was a stupid long list, so let's divide things up.
+Currently unsupported instructions: pei, mvn, mvp. Can
+be replaced through the following macros (thanks hamtaro126):
 
-These opcodes have no arguments (easiest to implement).
+.macro PEI indirect
+.db $D4, indirect
+.endm
 
-xce
-phb
-phd
-phk
-phx
-phy
-plb
-pld
-plx
-ply
-tcd
-tcs
-tdc
-tsc
-txy
-tyx
-rtl
-stp
-wai
-xba
+.macro MVP srcbank, dstbank
+.db $44, srcbank, dstbank
+.endm
 
-Let's go ahead and add those to the program...
-
-Easy enough, very tedious implementations.
-
-Now let's see what's left.
-
-stz
-brl
-bra
-sep
-rep
-pea
-pei
-per
-trb
-tsb
-mvn
-mvp
-jml
-jsl
-cop
-
-Nothing too bad, but new addressing modes
-are present now. asm16 needs to know about
-them! So let's list them out.
-
-Stolen from https://wiki.nesdev.com/w/images/7/76/Programmanual.pdf
-
-Program Counter Relative Long; BRL; JMPLABEL
-Stack Relative; LDA; 3, S
-Stack Relative Indirect Indexed with Y; LDA; (5,S), Y
-Block Move; MVP; 0,0
-Absolute Long; LDA; $02F000
-Absolute Long Indexed with X; LDA; $12D080, X
-Absolute Indirect Long; JMP; [$2000]
-Direct Page Indirect Long; LDA; [$55]
-Direct Page Indirect Long Indexed with Y; LDA; [$55], Y
-
-Currently we're just concerned with adding new stuff to enums.
-
-Those are all in with respective names:
-RELL, RELS, RELSY, BMV, ABSL, ABSLX, ABSIL, ZPIL, ZPILY.
-I'm just referring to direct page as ZP for now. Not sure
-if custom DP control is a planned feature.
-
-So let's try adding some of those opcodes in...it takes a while.
-
-Opcode data is stored in arrays. The pattern goes from least
-permissive to most. I'll need to keep this in mind.
-
-So the new opcodes with args were an easy add. Except for mvn, mvp,
-and pei. Not touching them yet.
-
-The crazy part is adding on to the existing opcodes that
-got new addressing modes. This'll be fun.
-
-So let's list all the 6502's opcodes, from asm6.c because I'm lazy!
-
-byte brk[]={0x00,IMM,0x00,ZP,0x00,IMP,-1};
-byte ora[]={0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x19,ABSY,0x05,ZP,0x0d,ABS,-1};
-byte asl[]={0x0a,ACC,0x16,ZPX,0x1e,ABSX,0x06,ZP,0x0e,ABS,0x0a,IMP,-1};
-byte php[]={0x08,IMP,-1};
-byte bpl[]={0x10,REL,-1};
-byte clc[]={0x18,IMP,-1};
-byte jsr[]={0x20,ABS,-1};
-byte and[]={0x29,IMM,0x21,INDX,0x31,INDY,0x35,ZPX,0x3d,ABSX,0x39,ABSY,0x25,ZP,0x2d,ABS,-1};
-byte bit[]={0x24,ZP,0x2c,ABS,-1};
-byte rol[]={0x2a,ACC,0x36,ZPX,0x3e,ABSX,0x26,ZP,0x2e,ABS,0x2a,IMP,-1};
-byte plp[]={0x28,IMP,-1};
-byte bmi[]={0x30,REL,-1};
-byte sec[]={0x38,IMP,-1};
-byte rti[]={0x40,IMP,-1};
-byte eor[]={0x49,IMM,0x41,INDX,0x51,INDY,0x55,ZPX,0x5d,ABSX,0x59,ABSY,0x45,ZP,0x4d,ABS,-1};
-byte lsr[]={0x4a,ACC,0x56,ZPX,0x5e,ABSX,0x46,ZP,0x4e,ABS,0x4a,IMP,-1};
-byte pha[]={0x48,IMP,-1};
-byte jmp[]={0x6c,IND,0x4c,ABS,-1};
-byte bvc[]={0x50,REL,-1};
-byte cli[]={0x58,IMP,-1};
-byte rts[]={0x60,IMP,-1};
-byte adc[]={0x69,IMM,0x61,INDX,0x71,INDY,0x75,ZPX,0x7d,ABSX,0x79,ABSY,0x65,ZP,0x6d,ABS,-1};
-byte ror[]={0x6a,ACC,0x76,ZPX,0x7e,ABSX,0x66,ZP,0x6e,ABS,0x6a,IMP,-1};
-byte pla[]={0x68,IMP,-1};
-byte bvs[]={0x70,REL,-1};
-byte sei[]={0x78,IMP,-1};
-byte sta[]={0x81,INDX,0x91,INDY,0x95,ZPX,0x9d,ABSX,0x99,ABSY,0x85,ZP,0x8d,ABS,-1};
-byte sty[]={0x94,ZPX,0x84,ZP,0x8c,ABS,-1};
-byte stx[]={0x96,ZPY,0x86,ZP,0x8e,ABS,-1};
-byte dey[]={0x88,IMP,-1};
-byte txa[]={0x8a,IMP,-1};
-byte bcc[]={0x90,REL,-1};
-byte tya[]={0x98,IMP,-1};
-byte txs[]={0x9a,IMP,-1};
-byte ldy[]={0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,-1};
-byte lda[]={0xa9,IMM,0xa1,INDX,0xb1,INDY,0xb5,ZPX,0xbd,ABSX,0xb9,ABSY,0xa5,ZP,0xad,ABS,-1};
-byte ldx[]={0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,-1};
-byte tay[]={0xa8,IMP,-1};
-byte tax[]={0xaa,IMP,-1};
-byte bcs[]={0xb0,REL,-1};
-byte clv[]={0xb8,IMP,-1};
-byte tsx[]={0xba,IMP,-1};
-byte cpy[]={0xc0,IMM,0xc4,ZP,0xcc,ABS,-1};
-byte cmp[]={0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSX,0xd9,ABSY,0xc5,ZP,0xcd,ABS,-1};
-byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,-1};
-byte iny[]={0xc8,IMP,-1};
-byte dex[]={0xca,IMP,-1};
-byte bne[]={0xd0,REL,-1};
-byte cld[]={0xd8,IMP,-1};
-byte cpx[]={0xe0,IMM,0xe4,ZP,0xec,ABS,-1};
-byte sbc[]={0xe9,IMM,0xe1,INDX,0xf1,INDY,0xf5,ZPX,0xfd,ABSX,0xf9,ABSY,0xe5,ZP,0xed,ABS,-1};
-byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,-1};
-byte inx[]={0xe8,IMP,-1};
-byte nop[]={0xea,IMP,-1};
-byte beq[]={0xf0,REL,-1};
-byte sed[]={0xf8,IMP,-1};
-
-Now let's take out all the no-args.
-
-byte brk[]={0x00,IMM,0x00,ZP,0x00,IMP,-1};
-byte ora[]={0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x19,ABSY,0x05,ZP,0x0d,ABS,-1};
-byte asl[]={0x0a,ACC,0x16,ZPX,0x1e,ABSX,0x06,ZP,0x0e,ABS,0x0a,IMP,-1};
-byte bpl[]={0x10,REL,-1};
-byte jsr[]={0x20,ABS,-1};
-byte and[]={0x29,IMM,0x21,INDX,0x31,INDY,0x35,ZPX,0x3d,ABSX,0x39,ABSY,0x25,ZP,0x2d,ABS,-1};
-byte bit[]={0x24,ZP,0x2c,ABS,-1};
-byte rol[]={0x2a,ACC,0x36,ZPX,0x3e,ABSX,0x26,ZP,0x2e,ABS,0x2a,IMP,-1};
-byte bmi[]={0x30,REL,-1};
-byte eor[]={0x49,IMM,0x41,INDX,0x51,INDY,0x55,ZPX,0x5d,ABSX,0x59,ABSY,0x45,ZP,0x4d,ABS,-1};
-byte lsr[]={0x4a,ACC,0x56,ZPX,0x5e,ABSX,0x46,ZP,0x4e,ABS,0x4a,IMP,-1};
-byte jmp[]={0x6c,IND,0x4c,ABS,-1};
-byte bvc[]={0x50,REL,-1};
-byte adc[]={0x69,IMM,0x61,INDX,0x71,INDY,0x75,ZPX,0x7d,ABSX,0x79,ABSY,0x65,ZP,0x6d,ABS,-1};
-byte ror[]={0x6a,ACC,0x76,ZPX,0x7e,ABSX,0x66,ZP,0x6e,ABS,0x6a,IMP,-1};
-byte bvs[]={0x70,REL,-1};
-byte sta[]={0x81,INDX,0x91,INDY,0x95,ZPX,0x9d,ABSX,0x99,ABSY,0x85,ZP,0x8d,ABS,-1};
-byte sty[]={0x94,ZPX,0x84,ZP,0x8c,ABS,-1};
-byte stx[]={0x96,ZPY,0x86,ZP,0x8e,ABS,-1};
-byte bcc[]={0x90,REL,-1};
-byte ldy[]={0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,-1};
-byte lda[]={0xa9,IMM,0xa1,INDX,0xb1,INDY,0xb5,ZPX,0xbd,ABSX,0xb9,ABSY,0xa5,ZP,0xad,ABS,-1};
-byte ldx[]={0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,-1};
-byte bcs[]={0xb0,REL,-1};
-byte cpy[]={0xc0,IMM,0xc4,ZP,0xcc,ABS,-1};
-byte cmp[]={0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSX,0xd9,ABSY,0xc5,ZP,0xcd,ABS,-1};
-byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,-1};
-byte bne[]={0xd0,REL,-1};
-byte cpx[]={0xe0,IMM,0xe4,ZP,0xec,ABS,-1};
-byte sbc[]={0xe9,IMM,0xe1,INDX,0xf1,INDY,0xf5,ZPX,0xfd,ABSX,0xf9,ABSY,0xe5,ZP,0xed,ABS,-1};
-byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,-1};
-byte beq[]={0xf0,REL,-1};
-
-A nicely reduced list. Now for me to go through and find out
-what all actually changed.
-
-byte ora[]={0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSX,0x19,ABSY,0x05,ZP,0x0d,ABS,-1};
-byte jsr[]={0x20,ABS,-1};
-byte and[]={0x29,IMM,0x21,INDX,0x31,INDY,0x35,ZPX,0x3d,ABSX,0x39,ABSY,0x25,ZP,0x2d,ABS,-1};
-byte bit[]={0x24,ZP,0x2c,ABS,-1};
-byte eor[]={0x49,IMM,0x41,INDX,0x51,INDY,0x55,ZPX,0x5d,ABSX,0x59,ABSY,0x45,ZP,0x4d,ABS,-1};
-byte jmp[]={0x6c,IND,0x4c,ABS,-1};
-byte adc[]={0x69,IMM,0x61,INDX,0x71,INDY,0x75,ZPX,0x7d,ABSX,0x79,ABSY,0x65,ZP,0x6d,ABS,-1};
-byte sta[]={0x81,INDX,0x91,INDY,0x95,ZPX,0x9d,ABSX,0x99,ABSY,0x85,ZP,0x8d,ABS,-1};
-byte sty[]={0x94,ZPX,0x84,ZP,0x8c,ABS,-1};
-byte stx[]={0x96,ZPY,0x86,ZP,0x8e,ABS,-1};
-byte ldy[]={0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,-1};
-byte lda[]={0xa9,IMM,0xa1,INDX,0xb1,INDY,0xb5,ZPX,0xbd,ABSX,0xb9,ABSY,0xa5,ZP,0xad,ABS,-1};
-byte ldx[]={0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,-1};
-byte cmp[]={0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSX,0xd9,ABSY,0xc5,ZP,0xcd,ABS,-1};
-byte sbc[]={0xe9,IMM,0xe1,INDX,0xf1,INDY,0xf5,ZPX,0xfd,ABSX,0xf9,ABSY,0xe5,ZP,0xed,ABS,-1};
-
-This is a big list. I don't like it. I'm separating these above opcodes
-from their 6502 classic friends in the source file for my sanity.
-
-So since I could only stand adding the new stuff for maybe five minutes,
-I figure let's go ahead and teach asm16 how to handle these new opcode options.
-
-First off, no bracket support. Easy fix, just add '[' to a switch case.
-
-Now, the function that decides which opcode to use had some simplicities
-going on because the assembler originally lacked concern for 24-bit numbers.
-Mwahaha, say goodbye to simplicity!
-
-The rule for adding new opcode stuff has been found: first the original, then its
-long counterpart. Otherwise the assembler will default to bigger opcode and that sucks.
-Not even mentioning that later on, control of A, X and Y sizes will be added...
-
-Oh hey, fun bug. So opcode arrays are unsigned chars, ended with -1.
-Well, for an unsigned 8-bit variable, -1 is hex FF. so is a 65816 opcode.
-So imagine me sitting there appalled for 3 hours as to why asm6 was suddenly
-being my worst nightmare.
+.macro MVN srcbank dstbank
+.db $54, srcbank, dstbank
+.endm
