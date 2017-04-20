@@ -258,6 +258,8 @@ byte sbc[]={0xe3,RELS,0xF3,RELSY,0xF7,ZPILY,0xE7,ZPIL,
 	0xF2,IND,0xe9,IMML,0xe9,IMM,0xe1,INDX,0xf1,INDY,0x00,ABSLX,0xfd,ABSX,0xf5,ZPX,0xf9,ABSY,0xe5,ZP,0xed,ABS,0xEF,ABSL,-1};
 byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,0x3A,IMP,-1};
 byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,0x1A,IMP,-1};
+byte ina[]={0x1A,IMP,-1};//alias for inc a (actually just 'inc' in this assembler?)
+byte dea[]={0x3A,IMP,-1};//same deal
 
 //opcodes that involve a's size
 char *regaopts[]={
@@ -373,6 +375,8 @@ void *rsvdlist[]={       //all reserved words
         "TAS",tcs,
         "TDA",tdc,
         "TSA",tsc,
+        "INA",ina,
+        "DEA",dea,
         0, 0
 };
 
