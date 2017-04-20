@@ -1,5 +1,5 @@
-.include "snes.i"
-.include "macros.i"
+.include "test/snes.i"
+.include "test/macros.i"
 
 ; the code
 .org $8000
@@ -107,7 +107,7 @@ palette:
 palette_size:
 
 font:
-  .incbin "font.chr"
+  .incbin "test/font.chr"
 font_size:
 
 ppu_copy:
@@ -125,7 +125,7 @@ ppu_copy:
   plp
   rts
 
-.include "snesheader.s"
+.include "test/snesheader.s"
 
 ;128k
 .org $28000
