@@ -12,13 +12,6 @@ addressing and such. If not, bug reports are welcome.
 Test ROM is in the test folder (warning sloppy source), build with:
 asm16 test/main.s test/test.sfc
 
-Currently unsupported instructions: mvn, mvp. Can
-be replaced through the following macros (thanks hamtaro126):
-
-.macro MVP srcbank, dstbank
-.db $44, srcbank, dstbank
-.endm
-
-.macro MVN srcbank dstbank
-.db $54, srcbank, dstbank
-.endm
+All instructions are supported except WDM, which I see little purpose
+in adding. Whatever purpose you have for it, I recommend you handle that
+via a macro.

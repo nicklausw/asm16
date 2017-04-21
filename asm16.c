@@ -87,6 +87,11 @@ enum reg {b8, b16};
 enum reg reg_a = b8;
 enum reg reg_i = b8;
 
+//these opcodes get to be directives
+//because weird syntax.
+void mvn(label*,char**);
+void mvp(label*,char**);
+
 label *findlabel(char*);
 void initlabels();
 label *newlabel();
@@ -215,8 +220,6 @@ byte pei[]={0xD4,INDD,-1};
 byte per[]={0x62,RELL,-1};
 byte trb[]={0x14,ZP,0x1C,ABS,-1};
 byte tsb[]={0x04,ZP,0x0C,ABS,-1};
-//byte mvn[]={1,-1};
-//byte mvp[]={1,-1};
 byte jml[]={0x5C,ABSL,-1};
 byte jsl[]={0x22,ABSL,-1};
 byte cop[]={0x02,IMM,-1};
@@ -361,8 +364,6 @@ void *rsvdlist[]={       //all reserved words
 		"PER",per,
 		"TRB",trb,
 		"TSB",tsb,
-		//"MVN",mvn,
-		//"MVP",mvp,
 		"JML",jml,
 		"JSL",jsl,
 		"COP",cop,
@@ -414,6 +415,8 @@ struct {
         "DL",dl,
         "DH",dh,
         "ERROR",make_error,
+        "MVN",mvn,
+        "MVP",mvp,
         0, 0
 };
 
@@ -2399,4 +2402,42 @@ void make_error(label *id,char **next) {
     errmsg=s;
     error=1;
     *next=s+strlen(s);
+}
+
+void mvn(label *id,char **next) {
+    int val=0x54,val2;
+    output_le(val,1);
+    val=eval(next,WHOLEEXP);
+    
+    if(val>255 || val<-128)
+        errmsg=OutOfRange;
+
+    eatchar(next,',');
+    
+    val2=eval(next,WHOLEEXP);
+
+    if(val2>255 || val2<-128)
+        errmsg=OutOfRange;
+    
+    output_le(val2,1);
+    output_le(val,1);
+}
+
+void mvp(label *id,char **next) {
+    int val=0x44,val2;
+    output_le(val,1);
+    val=eval(next,WHOLEEXP);
+    
+    if(val>255 || val<-128)
+        errmsg=OutOfRange;
+
+    eatchar(next,',');
+    
+    val2=eval(next,WHOLEEXP);
+
+    if(val2>255 || val2<-128)
+        errmsg=OutOfRange;
+    
+    output_le(val2,1);
+    output_le(val,1);
 }
