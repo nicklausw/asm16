@@ -134,16 +134,16 @@ void expandrept(int,char*);
 void make_error(label*,char**);
 
 enum optypes {ACC,IMM,IND,INDX,INDY,ZPX,ZPY,ABSX,ABSY,ZP,ABS,REL,IMP,
-				/*65816 additions*/RELL, RELS, RELSY, BMV, ABSL, ABSLX, ABSIL, ZPIL, ZPILY, IMML};
+				/*65816 additions*/RELL, RELS, RELSY, BMV, ABSL, ABSLX, ABSIL, ZPIL, ZPILY, IMML, INDD};
 
 int opsize[]={0,1,2,1,1,1,1,2,2,1,2,1,0,
-				/*65816 additions*/2,1,1,2,3,3,3,3,3,2};
+				/*65816 additions*/2,1,1,2,3,3,3,3,3,2,1};
 
 char ophead[]={0,'#','(','(','(',0,0,0,0,0,0,0,0,
-				/*65816 additions*/0,0,'(',0,0,0,'[','[','[','#'};
+				/*65816 additions*/0,0,'(',0,0,0,'[','[','[','#','('};
 
 char *optail[]={"A","",")",",X)","),Y",",X",",Y",",X",",Y","","","","",
-				/*65816 additions*/"",",S",",S),Y","","",",X","]","]","],Y",""};
+				/*65816 additions*/"",",S",",S),Y","","",",X","]","]","],Y","",")"};
 
 //the classic never-before-changed 6502 opcodes
 byte brk[]={0x00,IMM,0x00,ZP,0x00,IMP,-1};
@@ -211,7 +211,7 @@ byte bra[]={0x80,REL,-1};
 byte sep[]={0xE2,IMM,-1};
 byte rep[]={0xC2,IMM,-1};
 byte pea[]={0xF4,ABS,-1};
-//byte pei[]={0xD4,INDD,-1};
+byte pei[]={0xD4,INDD,-1};
 byte per[]={0x62,RELL,-1};
 byte trb[]={0x14,ZP,0x1C,ABS,-1};
 byte tsb[]={0x04,ZP,0x0C,ABS,-1};
@@ -357,7 +357,7 @@ void *rsvdlist[]={       //all reserved words
 		"SEP",sep,
 		"REP",rep,
 		"PEA",pea,
-		//"PEI",pei,
+		"PEI",pei,
 		"PER",per,
 		"TRB",trb,
 		"TSB",tsb,
