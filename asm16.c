@@ -178,12 +178,10 @@ byte tax[]={0xaa,IMP,endop};
 byte bcs[]={0xb0,REL,endop};
 byte clv[]={0xb8,IMP,endop};
 byte tsx[]={0xba,IMP,endop};
-byte cpy[]={0xc0,IMM,0xc4,ZP,0xcc,ABS,endop};
 byte iny[]={0xc8,IMP,endop};
 byte dex[]={0xca,IMP,endop};
 byte bne[]={0xd0,REL,endop};
 byte cld[]={0xd8,IMP,endop};
-byte cpx[]={0xe0,IMM,0xe4,ZP,0xec,ABS,endop};
 byte inx[]={0xe8,IMP,endop};
 byte nop[]={0xea,IMP,endop};
 byte beq[]={0xf0,REL,endop};
@@ -227,6 +225,8 @@ byte jsl[]={0x22,ABSL,endop};
 byte cop[]={0x02,IMM,endop};
 
 //the modified 6502 originals (first line new, 2nd line old, some exceptions)
+byte cpx[]={0xe0,IMML,0xe0,IMM,0xe4,ZP,0xec,ABS,endop};
+byte cpy[]={0xc0,IMML,0xc0,IMM,0xc4,ZP,0xcc,ABS,endop};
 byte asl[]={0x0a,ACC,0x16,ZPX,0x1e,ABSX,0x06,ZP,0x0e,ABS,0x0e,ABSL,0x0a,IMP,endop};
 byte lsr[]={0x4a,ACC,0x56,ZPX,0x5e,ABSX,0x46,ZP,0x4e,ABS,0x4E,ABSL,0x4a,IMP,endop};
 byte rol[]={0x2a,ACC,0x36,ZPX,0x3e,ABSX,0x26,ZP,0x2e,ABS,0x2E,ABSL,0x2a,IMP,endop};
@@ -270,7 +270,7 @@ char *regaopts[]={
 };
 
 char *regiopts[]={
-    "LDX", "STX", "LDY", "STY", "\0"
+    "LDX", "STX", "LDY", "STY", "CPX", "CPY", "\0"
 };
 
 void *rsvdlist[]={       //all reserved words
@@ -1954,7 +1954,7 @@ void filler(int count,char **next) {
         count=0;
     if(eatchar(next,','))
         val=eval(next,WHOLEEXP);
-    if(!errmsg && !dependant) if(val>255 || val<-128 || count<0 || count>0x100000)
+    if(!errmsg && !dependant) if(val>255 || val<-128 || count<0 || count>0xffffff)
         errmsg=OutOfRange;
     if(errmsg) return;
     while(count--)//!#@$
