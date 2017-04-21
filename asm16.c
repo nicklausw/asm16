@@ -266,7 +266,7 @@ byte dea[]={0x3A,IMP,endop};//same deal with dec
 
 //opcodes that involve a's size
 char *regaopts[]={
-    "LDA", "STA", "CMP", "\0"
+    "LDA", "STA", "CMP", "CPA", "\0"
 };
 
 char *regiopts[]={
