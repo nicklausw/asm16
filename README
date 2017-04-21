@@ -12,12 +12,8 @@ addressing and such. If not, bug reports are welcome.
 Test ROM is in the test folder (warning sloppy source), build with:
 asm16 test/main.s test/test.sfc
 
-Currently unsupported instructions: pei, mvn, mvp. Can
+Currently unsupported instructions: mvn, mvp. Can
 be replaced through the following macros (thanks hamtaro126):
-
-.macro PEI indirect
-.db $D4, indirect
-.endm
 
 .macro MVP srcbank, dstbank
 .db $44, srcbank, dstbank
