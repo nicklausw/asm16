@@ -152,126 +152,122 @@ char *optail[]={"A","",")",",X)","),Y",",X",",Y",",X",",Y","","","","",
 
 #define endop 0x42
 
+//could be an enum?
+#define noreg 0
+#define areg 1
+#define ireg 2
+
 //the classic never-before-changed 6502 opcodes
-byte brk[]={0x00,IMM,0x00,ZP,0x00,IMP,endop};
-byte php[]={0x08,IMP,endop};
-byte bpl[]={0x10,REL,endop};
-byte clc[]={0x18,IMP,endop};
-byte plp[]={0x28,IMP,endop};
-byte bmi[]={0x30,REL,endop};
-byte sec[]={0x38,IMP,endop};
-byte rti[]={0x40,IMP,endop};
-byte pha[]={0x48,IMP,endop};
-byte bvc[]={0x50,REL,endop};
-byte cli[]={0x58,IMP,endop};
-byte rts[]={0x60,IMP,endop};
-byte pla[]={0x68,IMP,endop};
-byte bvs[]={0x70,REL,endop};
-byte sei[]={0x78,IMP,endop};
-byte dey[]={0x88,IMP,endop};
-byte txa[]={0x8a,IMP,endop};
-byte bcc[]={0x90,REL,endop};
-byte tya[]={0x98,IMP,endop};
-byte txs[]={0x9a,IMP,endop};
-byte tay[]={0xa8,IMP,endop};
-byte tax[]={0xaa,IMP,endop};
-byte bcs[]={0xb0,REL,endop};
-byte clv[]={0xb8,IMP,endop};
-byte tsx[]={0xba,IMP,endop};
-byte iny[]={0xc8,IMP,endop};
-byte dex[]={0xca,IMP,endop};
-byte bne[]={0xd0,REL,endop};
-byte cld[]={0xd8,IMP,endop};
-byte inx[]={0xe8,IMP,endop};
-byte nop[]={0xea,IMP,endop};
-byte beq[]={0xf0,REL,endop};
-byte sed[]={0xf8,IMP,endop};
+byte brk[]={noreg,0x00,IMM,0x00,ZP,0x00,IMP,endop};
+byte php[]={noreg,0x08,IMP,endop};
+byte bpl[]={noreg,0x10,REL,endop};
+byte clc[]={noreg,0x18,IMP,endop};
+byte plp[]={noreg,0x28,IMP,endop};
+byte bmi[]={noreg,0x30,REL,endop};
+byte sec[]={noreg,0x38,IMP,endop};
+byte rti[]={noreg,0x40,IMP,endop};
+byte pha[]={noreg,0x48,IMP,endop};
+byte bvc[]={noreg,0x50,REL,endop};
+byte cli[]={noreg,0x58,IMP,endop};
+byte rts[]={noreg,0x60,IMP,endop};
+byte pla[]={noreg,0x68,IMP,endop};
+byte bvs[]={noreg,0x70,REL,endop};
+byte sei[]={noreg,0x78,IMP,endop};
+byte dey[]={noreg,0x88,IMP,endop};
+byte txa[]={noreg,0x8a,IMP,endop};
+byte bcc[]={noreg,0x90,REL,endop};
+byte tya[]={noreg,0x98,IMP,endop};
+byte txs[]={noreg,0x9a,IMP,endop};
+byte tay[]={noreg,0xa8,IMP,endop};
+byte tax[]={noreg,0xaa,IMP,endop};
+byte bcs[]={noreg,0xb0,REL,endop};
+byte clv[]={noreg,0xb8,IMP,endop};
+byte tsx[]={noreg,0xba,IMP,endop};
+byte iny[]={noreg,0xc8,IMP,endop};
+byte dex[]={noreg,0xca,IMP,endop};
+byte bne[]={noreg,0xd0,REL,endop};
+byte cld[]={noreg,0xd8,IMP,endop};
+byte inx[]={noreg,0xe8,IMP,endop};
+byte nop[]={noreg,0xea,IMP,endop};
+byte beq[]={noreg,0xf0,REL,endop};
+byte sed[]={noreg,0xf8,IMP,endop};
 
 //the no-arg 65816 additions
-byte xce[]={0xFB,IMP,endop};
-byte phb[]={0x8B,IMP,endop};
-byte phd[]={0x0B,IMP,endop};
-byte phk[]={0x4B,IMP,endop};
-byte phx[]={0xDA,IMP,endop};
-byte phy[]={0x5A,IMP,endop};
-byte plb[]={0xAB,IMP,endop};
-byte pld[]={0x2B,IMP,endop};
-byte plx[]={0xFA,IMP,endop};
-byte ply[]={0x7A,IMP,endop};
-byte tcd[]={0x5B,IMP,endop};
-byte tcs[]={0x1B,IMP,endop};
-byte tdc[]={0x7B,IMP,endop};
-byte tsc[]={0x3B,IMP,endop};
-byte txy[]={0x9B,IMP,endop};
-byte tyx[]={0xBB,IMP,endop};
-byte rtl[]={0x6B,IMP,endop};
-byte stp[]={0xDB,IMP,endop};
-byte wai[]={0xCB,IMP,endop};
-byte xba[]={0xEB,IMP,endop};
+byte xce[]={noreg,0xFB,IMP,endop};
+byte phb[]={noreg,0x8B,IMP,endop};
+byte phd[]={noreg,0x0B,IMP,endop};
+byte phk[]={noreg,0x4B,IMP,endop};
+byte phx[]={noreg,0xDA,IMP,endop};
+byte phy[]={noreg,0x5A,IMP,endop};
+byte plb[]={noreg,0xAB,IMP,endop};
+byte pld[]={noreg,0x2B,IMP,endop};
+byte plx[]={noreg,0xFA,IMP,endop};
+byte ply[]={noreg,0x7A,IMP,endop};
+byte tcd[]={noreg,0x5B,IMP,endop};
+byte tcs[]={noreg,0x1B,IMP,endop};
+byte tdc[]={noreg,0x7B,IMP,endop};
+byte tsc[]={noreg,0x3B,IMP,endop};
+byte txy[]={noreg,0x9B,IMP,endop};
+byte tyx[]={noreg,0xBB,IMP,endop};
+byte rtl[]={noreg,0x6B,IMP,endop};
+byte stp[]={noreg,0xDB,IMP,endop};
+byte wai[]={noreg,0xCB,IMP,endop};
+byte xba[]={noreg,0xEB,IMP,endop};
 
 //the some-arg 65816 additions
-byte stz[]={0x74,ZPX,0x64,ZP,0x9E,ABSX,0x9C,ABS,endop};
-byte brl[]={0x82,RELL,endop};
-byte bra[]={0x80,REL,endop};
-byte sep[]={0xE2,IMM,endop};
-byte rep[]={0xC2,IMM,endop};
-byte pea[]={0xF4,ABS,endop};
-byte pei[]={0xD4,INDD,endop};
-byte per[]={0x62,RELL,endop};
-byte trb[]={0x14,ZP,0x1C,ABS,endop};
-byte tsb[]={0x04,ZP,0x0C,ABS,endop};
-byte jml[]={0x5C,ABSL,endop};
-byte jsl[]={0x22,ABSL,endop};
-byte cop[]={0x02,IMM,endop};
+byte stz[]={noreg,0x74,ZPX,0x64,ZP,0x9E,ABSX,0x9C,ABS,endop};
+byte brl[]={noreg,0x82,RELL,endop};
+byte bra[]={noreg,0x80,REL,endop};
+byte sep[]={noreg,0xE2,IMM,endop};
+byte rep[]={noreg,0xC2,IMM,endop};
+byte pea[]={noreg,0xF4,ABS,endop};
+byte pei[]={noreg,0xD4,INDD,endop};
+byte per[]={noreg,0x62,RELL,endop};
+byte trb[]={noreg,0x14,ZP,0x1C,ABS,endop};
+byte tsb[]={noreg,0x04,ZP,0x0C,ABS,endop};
+byte jml[]={noreg,0x5C,ABSL,endop};
+byte jsl[]={noreg,0x22,ABSL,endop};
+byte cop[]={noreg,0x02,IMM,endop};
 
 //the modified 6502 originals (first line new, 2nd line old, some exceptions)
-byte cpx[]={0xe0,IMML,0xe0,IMM,0xe4,ZP,0xec,ABS,endop};
-byte cpy[]={0xc0,IMML,0xc0,IMM,0xc4,ZP,0xcc,ABS,endop};
-byte asl[]={0x0a,ACC,0x16,ZPX,0x1e,ABSX,0x06,ZP,0x0e,ABS,0x0e,ABSL,0x0a,IMP,endop};
-byte lsr[]={0x4a,ACC,0x56,ZPX,0x5e,ABSX,0x46,ZP,0x4e,ABS,0x4E,ABSL,0x4a,IMP,endop};
-byte rol[]={0x2a,ACC,0x36,ZPX,0x3e,ABSX,0x26,ZP,0x2e,ABS,0x2E,ABSL,0x2a,IMP,endop};
-byte ror[]={0x6a,ACC,0x76,ZPX,0x7e,ABSX,0x66,ZP,0x6e,ABS,0x6E,ABSL,0x6a,IMP,endop};
-byte ora[]={0x13,RELSY,0x03,RELS,0x17,ZPILY,0x12,IND,
+byte cpx[]={ireg,0xe0,IMML,0xe0,IMM,0xe4,ZP,0xec,ABS,endop};
+byte cpy[]={ireg,0xc0,IMML,0xc0,IMM,0xc4,ZP,0xcc,ABS,endop};
+byte asl[]={noreg,0x0a,ACC,0x16,ZPX,0x1e,ABSX,0x06,ZP,0x0e,ABS,0x0e,ABSL,0x0a,IMP,endop};
+byte lsr[]={noreg,0x4a,ACC,0x56,ZPX,0x5e,ABSX,0x46,ZP,0x4e,ABS,0x4E,ABSL,0x4a,IMP,endop};
+byte rol[]={noreg,0x2a,ACC,0x36,ZPX,0x3e,ABSX,0x26,ZP,0x2e,ABS,0x2E,ABSL,0x2a,IMP,endop};
+byte ror[]={noreg,0x6a,ACC,0x76,ZPX,0x7e,ABSX,0x66,ZP,0x6e,ABS,0x6E,ABSL,0x6a,IMP,endop};
+byte ora[]={noreg,0x13,RELSY,0x03,RELS,0x17,ZPILY,0x12,IND,
 	0x09,IMML,0x09,IMM,0x01,INDX,0x11,INDY,0x15,ZPX,0x1d,ABSLX,0x19,ABSX,0x1F,ABSY,0x05,ZP,0x0d,ABS,0x0F,ABSL,endop};
-byte jsr[]={0x22,ABSL,//alias jsl
+byte jsr[]={noreg,0x22,ABSL,//alias jsl
 	0x20,ABS,endop};
-byte and[]={0x33,RELSY,0x23,RELS,
+byte and[]={noreg,0x33,RELSY,0x23,RELS,
 	0x29,IMML,0x29,IMM,0x21,INDX,0x31,INDY,0x35,ZPX,0x3F,ABSLX,0x3d,ABSX,0x39,ABSY,0x25,ZP,0x2d,ABS,0x2F,ABSL,endop};
-byte bit[]={0x34,ZPX,0x24,ZP,0x3C,ABSX,0x2c,ABS,0x89,IMM,0x89,IMML,endop};
-byte eor[]={0x43,RELS,0x53,RELSY,
+byte bit[]={noreg,0x34,ZPX,0x24,ZP,0x3C,ABSX,0x2c,ABS,0x89,IMM,0x89,IMML,endop};
+byte eor[]={noreg,0x43,RELS,0x53,RELSY,
 	0x49,IMML,0x49,IMM,0x41,INDX,0x51,INDY,0x55,ZPX,0x5F,ABSLX,0x5d,ABSX,0x59,ABSY,0x45,ZP,0x4d,ABS,0x4F,ABSL,endop};
-byte jmp[]={0x6c,IND,0x4c,ABS,endop};
-byte adc[]={0x63,RELS,0x73,RELSY,
+byte jmp[]={noreg,0x6c,IND,0x4c,ABS,endop};
+byte adc[]={noreg,0x63,RELS,0x73,RELSY,
 	0x69,IMML,0x69,IMM,0x61,INDX,0x71,INDY,0x75,ZPX,0x7F,ABSLX,0x7d,ABSX,0x79,ABSY,0x65,ZP,0x6d,ABS,0x6F,ABSL,endop};
-byte sta[]={0x83,RELS,0x93,RELSY,
+byte sta[]={areg,0x83,RELS,0x93,RELSY,
 	0x81,INDX,0x91,INDY,0x95,ZPX,0x9F,ABSLX,0x9d,ABSX,0x99,ABSY,0x85,ZP,0x8d,ABS,0x8F,ABSL,endop};
-byte sty[]={
+byte sty[]={noreg,
 	0x94,ZPX,0x84,ZP,0x8c,ABS,endop};
-byte stx[]={
+byte stx[]={noreg,
 	0x96,ZPY,0x86,ZP,0x8e,ABS,endop};
-byte ldy[]={
+byte ldy[]={ireg,
 	0xa0,IMML,0xa0,IMM,0xb4,ZPX,0xbc,ABSX,0xa4,ZP,0xac,ABS,endop};
-byte lda[]={0xA3,RELS,0xB3,RELSY,
+byte lda[]={areg,0xA3,RELS,0xB3,RELSY,
 	0xa9,IMML,0xa9,IMM,0xa1,INDX,0xb1,INDY,0xb5,ZPX,0xBF,ABSLX,0xbd,ABSX,0xb9,ABSY,0xa5,ZP,0xad,ABS,0xAF,ABSL,endop};
-byte ldx[]={
+byte ldx[]={ireg,
 	0xa2,IMML,0xa2,IMM,0xb6,ZPY,0xbe,ABSY,0xa6,ZP,0xae,ABS,endop};
-byte cmp[]={0xC3,RELS,0xD3,RELSY,0xD7,ZPILY,
+byte cmp[]={areg,0xC3,RELS,0xD3,RELSY,0xD7,ZPILY,
 	0xc9,IMML,0xc9,IMM,0xc1,INDX,0xd1,INDY,0xd5,ZPX,0xdd,ABSLX,0xd9,ABSX,0xDF,ABSY,0xc5,ZP,0xcd,ABS,0xCF,ABSL,endop};
-byte sbc[]={0xe3,RELS,0xF3,RELSY,0xF7,ZPILY,0xE7,ZPIL,
+byte sbc[]={noreg,0xe3,RELS,0xF3,RELSY,0xF7,ZPILY,0xE7,ZPIL,
 	0xF2,IND,0xe9,IMML,0xe9,IMM,0xe1,INDX,0xf1,INDY,0xFF,ABSLX,0xfd,ABSX,0xf5,ZPX,0xf9,ABSY,0xe5,ZP,0xed,ABS,0xEF,ABSL,endop};
-byte dec[]={0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,0x3A,IMP,0x3A,ACC,endop};
-byte inc[]={0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,0x1A,IMP,0x1A,ACC,endop};
-byte ina[]={0x1A,IMP,endop};//alias for inc a
-byte dea[]={0x3A,IMP,endop};//same deal with dec
-
-//opcodes that involve a's size
-char *regaopts[]={
-    "LDA", "STA", "CMP", "CPA", "\0"
-};
-
-char *regiopts[]={
-    "LDX", "STX", "LDY", "STY", "CPX", "CPY", "\0"
-};
+byte dec[]={noreg,0xd6,ZPX,0xde,ABSX,0xc6,ZP,0xce,ABS,0x3A,IMP,0x3A,ACC,endop};
+byte inc[]={noreg,0xf6,ZPX,0xfe,ABSX,0xe6,ZP,0xee,ABS,0x1A,IMP,0x1A,ACC,endop};
+byte ina[]={noreg,0x1A,IMP,endop};//alias for inc a
+byte dea[]={noreg,0x3A,IMP,endop};//same deal with dec
 
 void *rsvdlist[]={       //all reserved words
         "BRK",brk,
@@ -1995,30 +1991,15 @@ void org(label *id, char **next) {
     else pad(id,next);
 }
 
-int affects_rega(const char *name) {
-    int c=0;
-    for(;regaopts[c][0]!='\0';c++) {
-        if(!strcmp(name, regaopts[c])) return 1;
-    }
-    return 0;
-}
-
-int affects_regi(const char *name) {
-    int c=0;
-    for(;regiopts[c][0]!='\0';c++) {
-        if(!strcmp(name, regiopts[c])) return 1;
-    }
-    return 0;
-}
-
 void opcode(label *id, char **next) {
     char *s,*s2;
     int type,val = 0;
     byte *op;
+    byte orig=(*id).line[0];
     int oldstate=needanotherpass;
     int forceRel = 0;
         
-    for(op=(byte*)(*id).line;*op!=endop;op+=2) {//loop through all addressing modes for this instruction
+    for(op=(byte*)(*id).line+1;*op!=endop;op+=2) {//loop through all addressing modes for this instruction
         needanotherpass=oldstate;
         strcpy(tmpstr,*next);
         dependant=0;
@@ -2068,9 +2049,9 @@ void opcode(label *id, char **next) {
 						if(type!=IMML&&type!=ABSX&&type!=ABSY&&type!=IND&&type!=ABS)
 							continue;
 						if(type==IMML) {
-							if(affects_rega((*id).name) && reg_a == b8)
+							if(orig == areg && reg_a == b8)
                                 continue;
-                            if(affects_regi((*id).name) && reg_i == b8)
+                            if(orig == ireg && reg_i == b8)
                                 continue;
 						}
 					}
