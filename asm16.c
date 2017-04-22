@@ -117,6 +117,8 @@ void dw(label*,char**);
 void db(label*,char**);
 void dl(label*,char**);
 void dh(label*,char**);
+void fdb(label*,char**);
+void fdw(label*,char**);
 void hex(label*,char**);
 void dsw(label*,char**);
 void dsb(label*,char**);
@@ -410,6 +412,8 @@ struct {
         "FILLVALUE",fillval,
         "DL",dl,
         "DH",dh,
+        "FDB",fdb,
+        "FDW",fdw,
         "ERROR",make_error,
         "MVN",mvn,
         "MVP",mvp,
@@ -2416,4 +2420,24 @@ void mvp(label *id,char **next) {
     
     output_le(val2,1);
     output_le(val,1);
+}
+
+void fdb(label *id, char **next) {
+    int val;
+    do {
+        val=eval(next,WHOLEEXP);
+        if(!errmsg) {
+            output_le(val & 0xFF,1);
+        }
+    } while(!errmsg && eatchar(next,','));
+}
+
+void fdw(label *id, char **next) {
+    int val;
+    do {
+        val=eval(next,WHOLEEXP);
+        if(!errmsg) {
+            output_le(val & 0xFFFF,2);
+        }
+    } while(!errmsg && eatchar(next,','));
 }
