@@ -2,6 +2,8 @@ Welcome to asm16, my child from the public domain.
 
 Original asm6 readme in README-OLD.
 
+Features and additions in CHANGELOG.
+
 It's basically asm6 for the snes, or any other machine
 you find that uses a WDC 65816 processor.
 

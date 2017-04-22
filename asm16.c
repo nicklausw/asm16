@@ -1,4 +1,4 @@
-/*  History:
+/*  asm6 History (asm16 history in CHANGELOG):
 1.6
     Prevent error overload by emitting 2 bytes when branch instructions fail to parse
     Bugfix for negative numbers being parsed incorrectly after too many passes are made
@@ -33,7 +33,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#define VERSION "1.6"
+#define VERSION "1.7"
 
 #define addr firstlabel.value//'$' value
 #define NOORIGIN -0x40000000//nice even number so aligning works before origin is defined
@@ -91,6 +91,15 @@ enum reg reg_i = b8;
 //because weird syntax.
 void mvn(label*,char**);
 void mvp(label*,char**);
+
+//register size changers
+int smartmode=1;
+void a8(label*,char**);
+void a16(label*,char**);
+void i8(label*,char**);
+void i16(label*,char**);
+void nosmart(label*,char**);
+void smart(label*,char**);
 
 label *findlabel(char*);
 void initlabels();
@@ -417,6 +426,11 @@ struct {
         "ERROR",make_error,
         "MVN",mvn,
         "MVP",mvp,
+        "A8",a8,"A16",a16,
+        "I8",i8,"I16",i16,
+        "XY8",i8,"XY16",i16,
+        "NOSMART",nosmart,
+        "SMART",smart,
         0, 0
 };
 
@@ -1475,7 +1489,7 @@ badlabel:
 void showhelp(void) {
     puts("");
     puts("asm16 " VERSION "\n");
-    puts("Usage:  asm6 [-options] sourcefile [outputfile] [listfile]\n");
+    puts("Usage:  asm16 [-options] sourcefile [outputfile] [listfile]\n");
     puts("    -?          show this help");
     puts("    -l          create listing");
     puts("    -L          create verbose listing (expand REPT, MACRO)");
@@ -2087,19 +2101,21 @@ void opcode(label *id, char **next) {
         output(op,1);
 
         // if it's rep or sep, register sizes will change.
-        if(!strcmp((*id).name, "REP")) {
-            //becomes 16 bit
-            switch(val) {
-                case 0x10: reg_i = b16; break;
-                case 0x20: reg_a = b16; break;
-                case 0x30: reg_a = b16; reg_i = b16; break;
-            }
-        } else if (!strcmp((*id).name, "SEP")) {
-            //becomes 8 bit
-            switch(val) {
-                case 0x10: reg_i = b8; break;
-                case 0x20: reg_a = b8; break;
-                case 0x30: reg_a = b8; reg_i = b8; break;
+        if(smartmode) {
+            if(!strcmp((*id).name, "REP")) {
+                //becomes 16 bit
+                switch(val) {
+                    case 0x10: reg_i = b16; break;
+                    case 0x20: reg_a = b16; break;
+                    case 0x30: reg_a = b16; reg_i = b16; break;
+                }
+            } else if (!strcmp((*id).name, "SEP")) {
+                //becomes 8 bit
+                switch(val) {
+                    case 0x10: reg_i = b8; break;
+                    case 0x20: reg_a = b8; break;
+                    case 0x30: reg_a = b8; reg_i = b8; break;
+                }
             }
         }
 
@@ -2440,4 +2456,28 @@ void fdw(label *id, char **next) {
             output_le(val & 0xFFFF,2);
         }
     } while(!errmsg && eatchar(next,','));
+}
+
+void a8(label *id,char **next) {
+    reg_a = b8;
+}
+
+void a16(label *id,char **next) {
+    reg_a = b16;
+}
+
+void i8(label *id,char **next) {
+    reg_i = b8;
+}
+
+void i16(label *id,char **next) {
+    reg_i = b16;
+}
+
+void nosmart(label *id,char **next) {
+    smartmode=0;
+}
+
+void smart(label *id,char **next) {
+    smartmode=1;
 }

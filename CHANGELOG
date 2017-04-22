@@ -1,0 +1,15 @@
+(original asm6 changelog in asm16.c)
+
+asm16 1.7 4/22/17
+ * added 65816 instruction set.
+ * added 24-bit addressing support.
+ * added automatic register size handling
+    * on by default, off with NOSMART, back on with SMART
+    * manual handling done with A8,A16,I8,I16
+       * XY8,XY16 -> I8,I16
+ * added FDB and FDW to force DB and DW values into their respective ranges.
+ * added pre-existing directive aliases for ca65 porting:
+    * ENDMACRO -> ENDM
+    * REPEAT -> REPT
+    * ENDREPEAT -> ENDR
+    * ENDENUM -> ENDE
