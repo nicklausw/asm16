@@ -2104,17 +2104,17 @@ void opcode(label *id, char **next) {
 		if(smartmode) {
 			if(!strcmp((*id).name, "REP")) {
 				//becomes 16 bit
-				switch(val) {
-					case 0x10: reg_i = b16; break;
-					case 0x20: reg_a = b16; break;
-					case 0x30: reg_a = b16; reg_i = b16; break;
+				switch(val>>4) {
+					case 0x01: reg_i = b16; break;
+					case 0x02: reg_a = b16; break;
+					case 0x03: reg_a = b16; reg_i = b16; break;
 				}
 			} else if (!strcmp((*id).name, "SEP")) {
 				//becomes 8 bit
-				switch(val) {
-					case 0x10: reg_i = b8; break;
-					case 0x20: reg_a = b8; break;
-					case 0x30: reg_a = b8; reg_i = b8; break;
+				switch(val>>4) {
+					case 0x01: reg_i = b8; break;
+					case 0x02: reg_a = b8; break;
+					case 0x03: reg_a = b8; reg_i = b8; break;
 				}
 			}
 		}
